@@ -1,4 +1,4 @@
-package com.selise.compliance
+package selise.compliance
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

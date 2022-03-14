@@ -1,4 +1,4 @@
-package com.selise.compliance
+package selise.compliance
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

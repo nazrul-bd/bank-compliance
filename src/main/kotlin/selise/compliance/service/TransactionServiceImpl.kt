@@ -121,26 +121,15 @@ class TransactionServiceImpl(
                         null
                     )
                     transDetails.save(details)
-                    userCurrentBalanceUpdate(transaction.toAccount, , transaction.fromAccount)
                 })
                 // update user current balance
-
-
-
-
+                userCurrentBalanceUpdate(transaction.toAccount, transaction.amount, transaction.fromAccount)
             }
         } catch (e: SQLException) {
             // Exception Not Handled
         }
-
         // and all the Details Transactions DEBIT to CREDIT and vice versa
-
-        // Update the Customer Current Balance
-
-
-        //val transaction = transactionModelMapper(userId, fromAcct, toAcct, amount, remarks)
-
-
+        return true
     }
 
 

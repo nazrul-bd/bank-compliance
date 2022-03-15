@@ -5,4 +5,7 @@ import org.springframework.stereotype.Repository
 import selise.compliance.entity.UserEntity
 
 @Repository
-interface UserRepository : JpaRepository<UserEntity, Long>
+interface UserRepository : JpaRepository<UserEntity, Long> {
+
+    fun findByAcctNo(acctNo: String): UserEntity
+}

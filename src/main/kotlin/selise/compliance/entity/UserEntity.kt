@@ -1,12 +1,14 @@
 package selise.compliance.entity
 
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.OneToMany
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = "user")
 class UserEntity(
-    @Id val id: Long, val name: String, val custId: String, val acctNo: String, @OneToMany val trans: List<Transactions>
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Long,
+    val name: String,
+    val customerId: String,
+    val acctNo: String,
+    var currentBalance: Double,
+    @OneToMany val trans: List<Transactions>
 )

@@ -5,4 +5,7 @@ import org.springframework.stereotype.Repository
 import selise.compliance.entity.Transactions
 
 @Repository
-interface TransactionsRepository : JpaRepository<Transactions, Long>
+interface TransactionsRepository : JpaRepository<Transactions, Long> {
+
+    fun findByTransactionId(transactionId: String): Transactions
+}

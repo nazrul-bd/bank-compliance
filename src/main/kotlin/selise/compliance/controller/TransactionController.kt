@@ -16,12 +16,13 @@ class TransactionController(val transaction: TransactionService) {
     @PostMapping("/add-money")
     fun addMoneyRequest(@RequestBody reqDTO: AddMoneyReqDTO): ResponseEntity<ResponseDTO> {
 
-        val addMoney = transaction.addMoney(reqDTO.userId, reqDTO.fromAcct, reqDTO.toAcct, reqDTO.amount, "Dollar Vanganu")
+        val transId =
+            transaction.addMoney(reqDTO.userId, reqDTO.fromAcct, reqDTO.toAcct, reqDTO.amount, "Dollar Vanganu")
         val response = ResponseDTO(200, "", "")
-        if (addMoney) {
+        if (!transId.isEmpty()) {
             response.code = 200
             response.message = "Success"
-            response.data = ""
+            response.data = "transId: $transId"
         } else {
             response.code = 400
             response.message = "Failed"

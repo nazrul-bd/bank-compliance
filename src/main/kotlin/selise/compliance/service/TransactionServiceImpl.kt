@@ -21,7 +21,7 @@ class TransactionServiceImpl(
 ) : TransactionService, TransactionReversalService {
 
     @Transactional
-    override fun addMoney(userId: Long, fromAcct: String, toAcct: String, amount: Double, remarks: String): Boolean {
+    override fun addMoney(userId: Long, fromAcct: String, toAcct: String, amount: Double, remarks: String): String {
 
         // Transaction Model Mapper
         val transaction = transactionModelMapper(userId, fromAcct, toAcct, amount, remarks)
@@ -42,12 +42,13 @@ class TransactionServiceImpl(
                 )
                 transDetails.save(details)
                 userCurrentBalanceUpdate(fromAcct, amount, toAcct)
+                return transId.transactionId
             }
         } catch (e: SQLException) {
             // Exception Not Handled
-            return false
+            return ""
         }
-        return true
+        return ""
     }
 
     private fun userCurrentBalanceUpdate(fromAcct: String, amount: Double, toAcct: String) {

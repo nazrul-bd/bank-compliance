@@ -5,26 +5,26 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import selise.compliance.dto.AddMoneyReqDTO
 import selise.compliance.dto.ResponseDTO
-import selise.compliance.service.TransactionService
+import selise.compliance.dto.TransactionReversalReqDTO
+import selise.compliance.service.TransactionReversalService
 
 @RestController
-@RequestMapping("/customer/v1")
-class TransactionController(val transaction: TransactionService) {
+@RequestMapping("/transaction")
+class TransactionReversalController(val transaction: TransactionReversalService) {
 
-    @PostMapping("/add-money")
-    fun addMoneyRequest(@RequestBody reqDTO: AddMoneyReqDTO): ResponseEntity<ResponseDTO> {
+    @PostMapping("/reverse")
+    fun addMoneyRequest(@RequestBody reqDTO: TransactionReversalReqDTO): ResponseEntity<ResponseDTO> {
 
-        val addMoney = transaction.addMoney(reqDTO.userId, reqDTO.fromAcct, reqDTO.toAcct, reqDTO.amount, "Dollar Vanganu")
+        val isReversed = transaction.reverseTransaction(reqDTO.transactionId, reqDTO.userId)
         val response = ResponseDTO(200, "", "")
-        if (addMoney) {
+        if (isReversed) {
             response.code = 200
-            response.message = "Success"
+            response.message = "Reversal Success"
             response.data = ""
         } else {
             response.code = 400
-            response.message = "Failed"
+            response.message = "Reversal Failed for ${reqDTO.transactionId}"
             response.data = ""
         }
         return ResponseEntity.ok(response)

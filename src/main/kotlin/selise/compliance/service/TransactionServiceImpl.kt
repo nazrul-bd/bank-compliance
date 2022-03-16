@@ -8,6 +8,7 @@ import selise.compliance.repository.TransactionsDetailsRepository
 import selise.compliance.repository.TransactionsRepository
 import selise.compliance.repository.UserRepository
 import java.sql.SQLException
+import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
 
@@ -24,35 +25,41 @@ class TransactionServiceImpl(
 
         // Transaction Model Mapper
         val transaction = transactionModelMapper(userId, fromAcct, toAcct, amount, remarks)
-
         try {
             if (transaction != null) {
                 // Saving Main Transaction
-                val transId = transactionRepository.save(transaction).id
+                val transId = transactionRepository.save(transaction)
                 // Saving Transaction Details
                 var details = TransactionDetails(
-                    null, transId.toString(), null, amount, "CUST_GL", "CREDIT", "CUSTOMER GL TRANSFER", null
+                    null,
+                    transId.transactionId,
+                    null,
+                    amount,
+                    "CUST_GL",
+                    "CREDIT",
+                    "CUSTOMER GL TRANSFER",
+                    LocalDateTime.now()
                 )
                 transDetails.save(details)
                 userCurrentBalanceUpdate(fromAcct, amount, toAcct)
-
             }
         } catch (e: SQLException) {
             // Exception Not Handled
+            return false
         }
-        return false
+        return true
     }
 
     private fun userCurrentBalanceUpdate(fromAcct: String, amount: Double, toAcct: String) {
 
         // Updating the Debit/From Account Balance
-        val userInfoDebit = userRepo.findByAcctNo(fromAcct)
+        val userInfoDebit = userRepo.findByAccountNo(fromAcct)
         if (userInfoDebit != null) {
             userInfoDebit.currentBalance -= amount
             userRepo.save(userInfoDebit)
         }
         // Updating the Credit/To Account Balance
-        val userInfoCredit = userRepo.findByAcctNo(toAcct)
+        val userInfoCredit = userRepo.findByAccountNo(toAcct)
         if (userInfoCredit != null) {
             userInfoCredit.currentBalance += amount
             userRepo.save(userInfoCredit)
@@ -67,15 +74,15 @@ class TransactionServiceImpl(
         if (user.isPresent) return Transactions(
             null,
             user.get(),
-            fromAcct,
+            UUID.randomUUID().toString(),
             amount,
+            fromAcct,
             toAcct,
-            remarks,
             null,
             "SUCCESS",
-            "test transaction",
+            remarks,
             user.get().id,
-            null
+            LocalDateTime.now()
         )
         else return null
 
@@ -85,7 +92,7 @@ class TransactionServiceImpl(
 
         // Find the actual faulty transaction that will be reversed
         val user = userRepo.findById(userId)
-        val transaction = transactionRepository.findByTransactionId(transactionId)
+        val transaction = transactionRepository.findByTransactionIdAndStatus(transactionId, "SUCCESS")
         val details = transDetails.findByTransactionId(transaction.transactionId)
 
         // Make the transaction status REVERSED at the END
@@ -94,25 +101,27 @@ class TransactionServiceImpl(
         try {
             if (transaction != null) {
                 // Saving Main Transaction
-                val reversedTransId = Transactions(
-                    null,
-                    user.get(),
-                    UUID.randomUUID().toString(),
-                    transaction.amount,
-                    transaction.toAccount,
-                    transaction.fromAccount,
-                    null,
-                    "REVERSAL",
-                    "Its a reversal transaction",
-                    user.get().id,
-                    null
+                val reversedTransId = transactionRepository.save(
+                    Transactions(
+                        null,
+                        user.get(),
+                        UUID.randomUUID().toString(),
+                        transaction.amount,
+                        transaction.toAccount,
+                        transaction.fromAccount,
+                        null,
+                        "REVERSAL",
+                        "Its a reversal transaction",
+                        user.get().id,
+                        LocalDateTime.now()
+                    )
                 )
                 // Saving Reversed Transaction Details
                 details.parallelStream().forEach({
                     val tempAmount = it.amount - transaction.amount
                     val details = TransactionDetails(
                         null,
-                        reversedTransId.toString(),
+                        transactionId,
                         reversedTransId.transactionId,
                         tempAmount,
                         "CUST_GL",
@@ -125,8 +134,12 @@ class TransactionServiceImpl(
                 // update user current balance
                 userCurrentBalanceUpdate(transaction.toAccount, transaction.amount, transaction.fromAccount)
             }
+            // Main Transaction Status Changed
+            transaction.status = "REVERSED"
+            transactionRepository.save(transaction)
         } catch (e: SQLException) {
             // Exception Not Handled
+            return false
         }
         // and all the Details Transactions DEBIT to CREDIT and vice versa
         return true

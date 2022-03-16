@@ -3,7 +3,9 @@ package selise.compliance.entity
 import javax.persistence.*
 
 @Entity
-@Table
+@Table(name = "transaction_type")
 class TransactionType(
-    @Id val id: String, @Column(name = "trans_type") val transType: String, @OneToMany val trans: Set<Transactions>
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Long,
+    @Column(name = "transaction_type") val transType: String,
+    @OneToMany(mappedBy = "transType") val transactions: List<Transactions>
 )

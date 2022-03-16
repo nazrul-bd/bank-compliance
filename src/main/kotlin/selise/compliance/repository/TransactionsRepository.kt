@@ -7,5 +7,5 @@ import selise.compliance.entity.Transactions
 @Repository
 interface TransactionsRepository : JpaRepository<Transactions, Long> {
 
-    fun findByTransactionId(transactionId: String): Transactions
+    fun findByTransactionIdAndStatus(transactionId: String, status: String): Transactions
 }

@@ -7,5 +7,5 @@ import selise.compliance.entity.UserEntity
 @Repository
 interface UserRepository : JpaRepository<UserEntity, Long> {
 
-    fun findByAcctNo(acctNo: String): UserEntity
+    fun findByAccountNo(acctNo: String): UserEntity
 }

@@ -7,9 +7,8 @@ import javax.persistence.*
 @Table(name = "transaction_details")
 class TransactionDetails(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Long? = null,
-    val transactionId: String,
-    @Column(name = "reversedTransId")
-    val reversedTransactionId: String?,
+     val transactionId: String,
+    @Column(name = "reversedTransId") val reversedTransactionId: String?,
     val amount: Double,
     val glAccount: String,
     val operationType: String,

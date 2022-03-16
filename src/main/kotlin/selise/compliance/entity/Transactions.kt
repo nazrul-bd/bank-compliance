@@ -12,9 +12,11 @@ class Transactions(
     val amount: Double,
     val fromAccount: String,
     val toAccount: String,
-    @ManyToOne @JoinColumn(name = "transType") val transType: TransactionType? = null,
-    val status: String,
+    @ManyToOne @JoinColumn(name = "trans_type") val transType: TransactionType? = null,
+    var status: String,
     val remarks: String,
     val createdBy: Long,
     val createdDate: LocalDateTime? = LocalDateTime.now()
+    /*@OneToMany(mappedBy = "transactions")
+    val transDetails: List<TransactionDetails>*/
 )

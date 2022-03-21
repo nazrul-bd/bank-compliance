@@ -1,0 +1,66 @@
+{
+	"info": {
+		"_postman_id": "a3f9c575-64c4-49e5-89d1-c249dd41c021",
+		"name": "Kotlin Microservice using SpringBoot",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Customer Add Money",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": 1001,\n    \"fromAcct\": \"01711111111\",\n    \"toAcct\": \"01711111112\",\n    \"amount\": 50,\n    \"remarks\": \"Dollar Vangano\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/customer/v1/add-money",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"customer",
+						"v1",
+						"add-money"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transaction Reversal",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"transactionId\": \"43b4910c-6088-4f48-936c-7de0d9a71a7f\",\n    \"userId\": 1001\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/transaction/reverse",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"transaction",
+						"reverse"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
